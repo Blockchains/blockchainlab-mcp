@@ -1,0 +1,24 @@
+{
+  "name": "blockchainlab-mcp",
+  "version": "0.1.0",
+  "description": "Blockchain Lab MCP server + JS SDK: lets AI agents (Cursor, Claude, Grok) query blockchain datasets (chains, DeFi TVL, EIPs/ERCs/BIPs, grants, hackathons, whitepapers, glossary) and live on-chain tools (gas, tx decoding, ENS, ABI). Built by Blockchain Lab — https://blockchainlab.com",
+  "type": "module",
+  "main": "./src/sdk.js",
+  "exports": { ".": "./src/sdk.js", "./onchain": "./src/onchain.js", "./server": "./src/server.js" },
+  "bin": { "blockchainlab-mcp": "bin/blockchainlab-mcp.js" },
+  "files": ["src", "bin", "README.md", "LICENSE"],
+  "engines": { "node": ">=18" },
+  "scripts": { "start": "node bin/blockchainlab-mcp.js", "test": "node test/sdk.test.mjs && node test/mcp.test.mjs" },
+  "keywords": ["mcp", "model-context-protocol", "blockchain", "ethereum", "defi", "ai-agents", "cursor", "claude", "grok", "sdk", "blockchainlab"],
+  "homepage": "https://github.com/Blockchains/blockchainlab-mcp#readme",
+  "repository": { "type": "git", "url": "git+https://github.com/Blockchains/blockchainlab-mcp.git" },
+  "bugs": "https://github.com/Blockchains/blockchainlab-mcp/issues",
+  "author": "Blockchain Lab (https://blockchainlab.com)",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "@openzeppelin/merkle-tree": "1.0.8",
+    "ethers": "6.13.4",
+    "zod": "^3.25.0"
+  }
+}
