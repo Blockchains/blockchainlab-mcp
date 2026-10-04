@@ -104,10 +104,27 @@ await onchain.decodeTx("ethereum", "0x…");
 await onchain.resolveEns("vitalik.eth");
 ```
 
+### TypeScript
+
+Type declarations ship in `types/` (since v0.3.0) for every entry point: `blockchainlab-mcp`, `/onchain`, `/onchain2` and `/server`. No `@types` package or `declare module` shim is needed. Requires TypeScript ≥ 5.7 (the re-exported `@scure/btc-signer` types use generic `Uint8Array`); with older TypeScript set `skipLibCheck: true`. Checked with 5.7, 5.9 and 7.0. Chain parameters are checked: `Chain` (EVM chains of the live tools), `UniV3Chain`, `BlockscoutChain`.
+
+```ts
+import { BlockchainLab, type DatasetDoc } from "blockchainlab-mcp";
+import { rpc, type Chain } from "blockchainlab-mcp/onchain";
+import { createServer } from "blockchainlab-mcp/server";   // McpServer with all 43 tools, for your own transport
+
+const bl = new BlockchainLab();
+const top = await bl.topProtocols({ category: "Lending", limit: 3 });   // { generated_at, source, results: Row[] }
+const chain: Chain = "base";
+const head: string = await rpc(chain, "eth_blockNumber");
+```
+
+`types/onchain*.d.ts` are generated from the JS sources (`npm run types`). `types/sdk.d.ts` and `types/server.d.ts` are hand-written. `test/types.test.mjs` fails if any of them drift from the runtime exports.
+
 ## Tests (live, no mocks)
 
 ```bash
-npm test   # SDK against the live API + spawns the real MCP server over stdio and calls all 16 tools
+npm test   # type declarations (offline) + SDK against the live API + spawns the real MCP server over stdio and calls all 43 tools (fails if any listed tool is untested)
 ```
 
 CI runs on Node 18/20/22 on every push and daily.
@@ -128,12 +145,15 @@ MIT. Read-only: the server never signs or sends transactions. Not financial advi
 | Export | Type | Install / access |
 |---|---|---|
 | `blockchainlab` | mcp-stdio | `npx -y github:Blockchains/blockchainlab-mcp` |
-| `ghcr.io/blockchains/blockchainlab-mcp` | docker | `docker run -i --rm ghcr.io/blockchains/blockchainlab-mcp:latest` |
-| `blockchainlab-mcp` | npm | `npm i github:Blockchains/blockchainlab-mcp` |
+| `ghcr.io/blockchains/blockchainlab-mcp` | docker | `docker run -i --rm ghcr.io/blockchains/blockchainlab-mcp:0.3.0` |
+| `blockchainlab-mcp` | npm | `npm i github:Blockchains/blockchainlab-mcp#v0.3.0` |
+| `blockchainlab-mcp/server` | npm | `npm i github:Blockchains/blockchainlab-mcp#v0.3.0` |
 
 `blockchainlab` exports: `search_whitepapers`, `get_chain`, `top_defi_protocols`, `chains_tvl`, `list_hackathons`, `list_events`, `list_grants`, `glossary`, `lookup_standard`, `gas_prices`, `decode_transaction`, `inspect_address`, `decode_calldata`, `abi_utils`, `convert_units`, `storage_slot`, `stablecoins`, `defi_yields`, `bridges_tvl`, `dex_volumes`, `protocol_fees`, `l2_metrics`, `security_incidents`, `sanctions_check`, `get_dataset`, `safe_info`, `safe_tx_hash`, `decode_safe_calldata`, `eip712_hash`, `verify_message`, `calldata_diff`, `contract_verification`, `gas_history`, `bridge_quotes`, `token_approvals`, `ens_bulk`, `decode_solana_tx`, `decode_psbt`, `address_labels`, `vanity_estimate`, `uniswap_price_impact`, `mev_sandwich_check`, `rpc_health`
 
-`blockchainlab-mcp` exports: `BlockchainLab`, `onchain`, `onchain2`, `toolLinks`, `DEFAULT_API`, `TOOLS_SITE`
+`blockchainlab-mcp` exports: `BlockchainLab`, `onchain`, `onchain2`, `toolLinks`, `DEFAULT_API`, `TOOLS_SITE`, `SITE`
+
+`blockchainlab-mcp/server` exports: `createServer`, `main`, `VERSION`
 
 **Minimal example** (Cursor `~/.cursor/mcp.json`, Claude Desktop or any stdio MCP client; `tools/list` returned 43 tools on 2026-10-04)
 
@@ -151,10 +171,10 @@ MIT. Read-only: the server never signs or sends transactions. Not financial advi
 - [Blockchains/blockchainlab-api](https://github.com/Blockchains/blockchainlab-api): data source for the dataset tools
 - [Blockchains/blockchainlab-tools](https://github.com/Blockchains/blockchainlab-tools): shares the on-chain logic (`src/onchain*.js` mirror `assets/core*.js`); results link to tool pages
 - [Blockchains/grokhack-forge](https://github.com/Blockchains/grokhack-forge): give a composed Grok app's developer agent these tools, or call the SDK in app code
-- [Blockchains/blockchainlab-sdk](https://github.com/Blockchains/blockchainlab-sdk): typed alternative for app code (this package ships no .d.ts yet)
+- [Blockchains/blockchainlab-sdk](https://github.com/Blockchains/blockchainlab-sdk): TS + Python client for the same datasets (this package also ships TypeScript types since v0.3.0)
 - [Blockchains/blockchainlab-lens](https://github.com/Blockchains/blockchainlab-lens): same explorer deep links
 
-**Versioning & stability:** `beta`. 0.x: tool names are kept stable, but new tools are added and output fields may grow. Not on the npm registry yet; install from GitHub (pin `#<commit>`; no release tag yet) or use the GHCR image (`:latest`). `server.json` is prepared for the MCP Registry.
+**Versioning & stability:** `beta`. 0.x: tool names are kept stable, but new tools are added and output fields may grow. Releases are git tags + GitHub releases (latest v0.3.0: TypeScript declarations); not on the npm registry yet, so install from GitHub pinned to a tag (`#v0.3.0`) or use the GHCR image (`:0.3.0`, `:latest`). `server.json` is prepared for the MCP Registry.
 <!-- blocks:end -->
 
 ## Contributing
@@ -168,4 +188,5 @@ Built by Blockchain Lab — [blockchainlab.com](https://blockchainlab.com/?utm_s
 
 - `npm pack --dry-run` is run in CI; the package is **ready but deliberately not published** to npm. To publish: `npm publish` (name `blockchainlab-mcp`).
 - `server.json` is prepared for the official MCP Registry (`io.github.Blockchains/blockchainlab-mcp`) — publish with `mcp-publisher publish` after the npm release.
-- Docker image `ghcr.io/blockchains/blockchainlab-mcp` (linux/amd64 + arm64) is built, smoke-tested over stdio (initialize + tools/list ≥ 43) and pushed on every push to `main` and on `v*` tags.
+- Docker image `ghcr.io/blockchains/blockchainlab-mcp` (linux/amd64 + arm64) is built, smoke-tested over stdio (initialize + tools/list ≥ 43) and pushed on every push to `main` and on `v*` tags (`:latest`, `:<version>`, `:sha-…`).
+- Releases: git tags `vX.Y.Z` with GitHub releases (first: [v0.3.0](https://github.com/Blockchains/blockchainlab-mcp/releases/tag/v0.3.0)). Install a release from GitHub with `npm i github:Blockchains/blockchainlab-mcp#v0.3.0`, or pull `ghcr.io/blockchains/blockchainlab-mcp:0.3.0`.

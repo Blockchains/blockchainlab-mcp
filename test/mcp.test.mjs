@@ -1,11 +1,13 @@
-// Spawns the real MCP server over stdio with the official MCP client and calls every tool (live network).
+// Spawns the real MCP server over stdio with the official MCP client and calls every tool (live network); fails if any listed tool is not called.
 import assert from "node:assert/strict";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 const client = new Client({ name: "bl-test", version: "1.0.0" });
 await client.connect(new StdioClientTransport({ command: process.execPath, args: ["bin/blockchainlab-mcp.js"] }));
 const { tools } = await client.listTools(); console.log(`  ${tools.length} tools: ${tools.map(t => t.name).join(", ")}`);
+const called = new Set();
 const call = async (name, args, check) => {
+  called.add(name);
   const r = await client.callTool({ name, arguments: args }); const text = r.content[0].text;
   assert.ok(!r.isError, `${name} error: ${text}`); if (check) assert.ok(check(text), `${name} check failed: ${text.slice(0, 300)}`);
   console.log(`  ✓ ${name} ${JSON.stringify(args).slice(0, 60)} → ${text.replace(/\s+/g, " ").slice(0, 110)}`); return text;
@@ -47,7 +49,7 @@ await call("get_dataset", { name: "rpc-health", limit: 2 }, t => t.includes("rpc
 // real Safe from recent factory logs
 const { onchain: C2 } = await import("../src/sdk.js");
 const h2 = Number(await C2.rpc("ethereum", "eth_blockNumber")); let pl = [];
-for (let back = 300; !pl.length && back <= 3000; back += 300) pl = await C2.rpc("ethereum", "eth_getLogs", [{ fromBlock: "0x" + (h2 - back).toString(16), toBlock: "0x" + (h2 - back + 300).toString(16), address: "0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2" }]);
+for (let back = 320; !pl.length && back <= 3020; back += 300) pl = await C2.rpc("ethereum", "eth_getLogs", [{ fromBlock: "0x" + (h2 - back).toString(16), toBlock: "0x" + (h2 - back + 300).toString(16), address: "0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2" }]);
 const safeAddr = C2.ethers.getAddress("0x" + pl[0].data.slice(26, 66));
 await call("safe_info", { chain: "ethereum", safe: safeAddr }, t => t.includes("threshold"));
 await call("safe_tx_hash", { chain: "ethereum", safe: safeAddr, to: "0x000000000000000000000000000000000000dEaD", value: "1" }, t => t.includes('"matches": true'));
@@ -70,4 +72,8 @@ await call("vanity_estimate", { prefix: "dead", create2: { deployer: "0x00000000
 await call("uniswap_price_impact", { chain: "ethereum", tokenIn: D2.WETH.ethereum, tokenOut: D2.USDC.ethereum, amountIn: "1" }, t => t.includes("priceImpactPct"));
 await call("mev_sandwich_check", { chain: "ethereum", hash: "0xe7f3514e534215762a686f2535721c1ec07f95a09548dc669bafb5bc03fce7f4" }, t => t.includes('"sandwiched": true'));
 await call("rpc_health", { chain: "base" }, t => t.includes("healthy"));
-await client.close(); console.log("MCP OK", tools.length, "tools");
+// coverage: every tool the server lists must have been called above (add a call when you add a tool)
+const uncovered = tools.map(t => t.name).filter(n => !called.has(n));
+assert.deepEqual(uncovered, [], "tools without a test call: " + uncovered.join(", "));
+assert.equal(called.size, tools.length, "called a tool the server does not list");
+await client.close(); console.log("MCP OK", tools.length, "tools, all called");

@@ -3,9 +3,9 @@
   "name": "io.github.Blockchains/blockchainlab-mcp",
   "description": "43 tools for AI agents: blockchain datasets (chains, TVL, stablecoins, yields, L2BEAT, hacks, OFAC) and live on-chain tools (Safe, EIP-712, bridges, approvals, Solana, PSBT, MEV).",
   "repository": { "url": "https://github.com/Blockchains/blockchainlab-mcp", "source": "github" },
-  "version": "0.2.0",
+  "version": "0.3.0",
   "packages": [
-    { "registryType": "npm", "identifier": "blockchainlab-mcp", "version": "0.2.0", "transport": { "type": "stdio" } },
-    { "registryType": "oci", "identifier": "ghcr.io/blockchains/blockchainlab-mcp:0.2.0", "transport": { "type": "stdio" } }
+    { "registryType": "npm", "identifier": "blockchainlab-mcp", "version": "0.3.0", "transport": { "type": "stdio" } },
+    { "registryType": "oci", "identifier": "ghcr.io/blockchains/blockchainlab-mcp:0.3.0", "transport": { "type": "stdio" } }
   ]
 }

@@ -10,7 +10,7 @@
     "cli"
   ],
   "stability": "beta",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "license": "MIT",
   "entrypoints": [
     {
@@ -68,21 +68,35 @@
       "type": "docker",
       "name": "ghcr.io/blockchains/blockchainlab-mcp",
       "ref": "Dockerfile",
-      "usage": "docker run -i --rm ghcr.io/blockchains/blockchainlab-mcp:latest"
+      "usage": "docker run -i --rm ghcr.io/blockchains/blockchainlab-mcp:0.3.0"
     },
     {
       "type": "npm",
       "name": "blockchainlab-mcp",
       "ref": "src/sdk.js",
-      "install": "npm i github:Blockchains/blockchainlab-mcp",
+      "install": "npm i github:Blockchains/blockchainlab-mcp#v0.3.0",
       "exports": [
         "BlockchainLab",
         "onchain",
         "onchain2",
         "toolLinks",
         "DEFAULT_API",
-        "TOOLS_SITE"
-      ]
+        "TOOLS_SITE",
+        "SITE"
+      ],
+      "usage": "import { BlockchainLab } from 'blockchainlab-mcp'  // TypeScript types included (types/sdk.d.ts)"
+    },
+    {
+      "type": "npm",
+      "name": "blockchainlab-mcp/server",
+      "ref": "src/server.js",
+      "install": "npm i github:Blockchains/blockchainlab-mcp#v0.3.0",
+      "exports": [
+        "createServer",
+        "main",
+        "VERSION"
+      ],
+      "usage": "import { createServer } from 'blockchainlab-mcp/server'  // McpServer with all tools; connect any transport"
     }
   ],
   "inputs": [
@@ -123,7 +137,7 @@
     },
     {
       "repo": "Blockchains/blockchainlab-sdk",
-      "how": "typed alternative for app code (this package ships no .d.ts yet)"
+      "how": "TS + Python client for the same datasets (this package also ships TypeScript types since v0.3.0)"
     },
     {
       "repo": "Blockchains/blockchainlab-lens",

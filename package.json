@@ -1,14 +1,28 @@
 {
   "name": "blockchainlab-mcp",
-  "version": "0.2.0",
-  "description": "Blockchain Lab MCP server + JS SDK: 43 tools for AI agents (Cursor, Claude, Grok, VS Code) \u2014 blockchain datasets (chains, DeFi TVL, stablecoins, yields, bridges, DEX volumes, L2BEAT, hacks, OFAC, RPC health, EIPs) and live on-chain tools (Safe multisig, EIP-712, bridge quotes, token approvals, Solana & PSBT decoders, Uniswap price impact, MEV sandwich check, gas, tx decoding, ENS). Built by Blockchain Lab \u2014 https://blockchainlab.com",
+  "version": "0.3.0",
+  "description": "Blockchain Lab MCP server + JS SDK: 43 tools for AI agents (Cursor, Claude, Grok, VS Code) — blockchain datasets (chains, DeFi TVL, stablecoins, yields, bridges, DEX volumes, L2BEAT, hacks, OFAC, RPC health, EIPs) and live on-chain tools (Safe multisig, EIP-712, bridge quotes, token approvals, Solana & PSBT decoders, Uniswap price impact, MEV sandwich check, gas, tx decoding, ENS). Built by Blockchain Lab — https://blockchainlab.com",
   "type": "module",
   "main": "./src/sdk.js",
+  "types": "./types/sdk.d.ts",
   "exports": {
-    ".": "./src/sdk.js",
-    "./onchain": "./src/onchain.js",
-    "./onchain2": "./src/onchain2.js",
-    "./server": "./src/server.js"
+    ".": {
+      "types": "./types/sdk.d.ts",
+      "default": "./src/sdk.js"
+    },
+    "./onchain": {
+      "types": "./types/onchain.d.ts",
+      "default": "./src/onchain.js"
+    },
+    "./onchain2": {
+      "types": "./types/onchain2.d.ts",
+      "default": "./src/onchain2.js"
+    },
+    "./server": {
+      "types": "./types/server.d.ts",
+      "default": "./src/server.js"
+    },
+    "./package.json": "./package.json"
   },
   "bin": {
     "blockchainlab-mcp": "bin/blockchainlab-mcp.js"
@@ -16,6 +30,7 @@
   "files": [
     "src",
     "bin",
+    "types",
     "README.md",
     "LICENSE",
     "server.json"
@@ -25,7 +40,8 @@
   },
   "scripts": {
     "start": "node bin/blockchainlab-mcp.js",
-    "test": "node test/sdk.test.mjs && node test/mcp.test.mjs"
+    "types": "node scripts/gen-types.mjs",
+    "test": "node test/types.test.mjs && node test/sdk.test.mjs && node test/mcp.test.mjs"
   },
   "keywords": [
     "ai-agents",
@@ -65,5 +81,8 @@
     "ethers": "6.13.4",
     "zod": "^3.25.0"
   },
-  "mcpName": "io.github.Blockchains/blockchainlab-mcp"
+  "mcpName": "io.github.Blockchains/blockchainlab-mcp",
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
 }

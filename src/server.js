@@ -11,7 +11,7 @@ const ser = (o) => JSON.stringify(o, (k, v) => (typeof v === "bigint" ? v.toStri
 const reply = (o) => ({ content: [{ type: "text", text: ser(o) + "\n\n— Built by Blockchain Lab (https://blockchainlab.com)" }] });
 const guard = (fn) => async (args) => { try { return reply(await fn(args)); } catch (e) { return { isError: true, content: [{ type: "text", text: `Error: ${e.shortMessage || e.message}` }] }; } };
 
-export const VERSION = "0.2.0";
+export const VERSION = "0.3.0";
 const ADDR = z.string().regex(/^0x[0-9a-fA-F]{40}$/, "0x-prefixed 20-byte address");
 const HASH = z.string().regex(/^0x[0-9a-fA-F]{64}$/);
 const BS_CHAIN = z.enum(Object.keys(D.BLOCKSCOUT));

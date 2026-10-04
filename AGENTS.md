@@ -20,7 +20,9 @@ node bin/blockchainlab-mcp.js   # speaks MCP over stdio
 ## Build and test
 
 ```bash
-npm test   # SDK against the live API + spawns the real server over stdio and calls the tools
+npm test   # types (offline) + SDK against the live API + real stdio server calling all 43 tools (fails if a listed tool is untested)
+node test/types.test.mjs   # declarations only, offline
+npm run types   # regenerate types/onchain*.d.ts after changing src/onchain*.js
 npm pack --dry-run
 ```
 
@@ -40,7 +42,9 @@ Tests hit **live** public networks/APIs (the org rule is no mocks). A failure ca
 | `src/server.js` | MCP tool definitions (zod schemas) and handlers |
 | `src/sdk.js` | `BlockchainLab` dataset client + `toolLinks` |
 | `src/onchain.js, src/onchain2.js` | live on-chain helpers (ethers v6, @scure/btc-signer) |
-| `test/` | live SDK + MCP stdio tests |
+| `test/` | types test (offline), live SDK + MCP stdio tests |
+| `types/` | TypeScript declarations (onchain*.d.ts generated, sdk/server hand-written) |
+| `scripts/gen-types.mjs` | declaration generator |
 | `Dockerfile, server.json` | container image and MCP Registry metadata |
 
 ## Conventions
@@ -51,7 +55,8 @@ Tests hit **live** public networks/APIs (the org rule is no mocks). A failure ca
 
 ## Extension points
 
-- New tool: register it in `src/server.js` with a zod input schema, put logic in `src/sdk.js` or `src/onchain*.js`, add a live test in `test/mcp.test.mjs`.
+- New tool: register it in `src/server.js` with a zod input schema, put logic in `src/sdk.js` or `src/onchain*.js`, add a live call in `test/mcp.test.mjs` (the coverage check fails otherwise).
+- New export: after changing `src/onchain*.js` run `npm run types`; for `src/sdk.js` / `src/server.js` edit `types/sdk.d.ts` / `types/server.d.ts` by hand.
 - Custom data: set `BLOCKCHAINLAB_API`.
 
 ## Do
@@ -67,8 +72,9 @@ Tests hit **live** public networks/APIs (the org rule is no mocks). A failure ca
 ## Using it from another project
 
 - **blockchainlab** (mcp-stdio): `npx -y github:Blockchains/blockchainlab-mcp`
-- **ghcr.io/blockchains/blockchainlab-mcp** (docker): `docker run -i --rm ghcr.io/blockchains/blockchainlab-mcp:latest`
-- **blockchainlab-mcp** (npm): `npm i github:Blockchains/blockchainlab-mcp`
+- **ghcr.io/blockchains/blockchainlab-mcp** (docker): `docker run -i --rm ghcr.io/blockchains/blockchainlab-mcp:0.3.0`
+- **blockchainlab-mcp** (npm): `npm i github:Blockchains/blockchainlab-mcp#v0.3.0`
+- **blockchainlab-mcp/server** (npm): `npm i github:Blockchains/blockchainlab-mcp#v0.3.0`
 
 See the README section [Use as a building block](README.md#use-as-a-building-block) for a copy-paste example.
 
@@ -77,5 +83,5 @@ See the README section [Use as a building block](README.md#use-as-a-building-blo
 - [Blockchains/blockchainlab-api](https://github.com/Blockchains/blockchainlab-api): data source for the dataset tools
 - [Blockchains/blockchainlab-tools](https://github.com/Blockchains/blockchainlab-tools): shares the on-chain logic (`src/onchain*.js` mirror `assets/core*.js`); results link to tool pages
 - [Blockchains/grokhack-forge](https://github.com/Blockchains/grokhack-forge): give a composed Grok app's developer agent these tools, or call the SDK in app code
-- [Blockchains/blockchainlab-sdk](https://github.com/Blockchains/blockchainlab-sdk): typed alternative for app code (this package ships no .d.ts yet)
+- [Blockchains/blockchainlab-sdk](https://github.com/Blockchains/blockchainlab-sdk): TS + Python client for the same datasets (this package also ships TypeScript types since v0.3.0)
 - [Blockchains/blockchainlab-lens](https://github.com/Blockchains/blockchainlab-lens): same explorer deep links
