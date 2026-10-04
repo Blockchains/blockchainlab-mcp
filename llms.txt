@@ -1,0 +1,25 @@
+# blockchainlab-mcp
+
+> MCP server (stdio) with 43 read-only blockchain tools for AI agents (Cursor, Claude, Grok, any MCP client) plus the same logic as a JS SDK: datasets from the Open Data API and live on-chain helpers (tx/calldata decoding, gas, ENS, Safe, EIP-712, approvals, MEV, Solana, PSBT). No keys; never signs or sends.
+
+## Docs
+
+- [README](https://raw.githubusercontent.com/Blockchains/blockchainlab-mcp/main/README.md): overview, install and the 'Use as a building block' section
+- [AGENTS.md](https://raw.githubusercontent.com/Blockchains/blockchainlab-mcp/main/AGENTS.md): setup, build/test commands, structure map, conventions and rules for AI coding agents
+- [blocks.json](https://raw.githubusercontent.com/Blockchains/blockchainlab-mcp/main/blocks.json): machine-readable building-block manifest (entrypoints, inputs, outputs, deps, compatible blocks)
+
+## Key files
+
+- [src/server.js](https://github.com/Blockchains/blockchainlab-mcp/blob/main/src/server.js): tool registry
+- [src/sdk.js](https://github.com/Blockchains/blockchainlab-mcp/blob/main/src/sdk.js): SDK
+- [bin/blockchainlab-mcp.js](https://github.com/Blockchains/blockchainlab-mcp/blob/main/bin/blockchainlab-mcp.js): entry point
+
+## Related
+
+- [Build with Blocks](https://github.com/Blockchains/.github/blob/main/docs/BUILD-WITH-BLOCKS.md): how to assemble projects from Blockchains repos
+- [Org llms.txt](https://blockchains.github.io/llms.txt) · [blocks catalogue](https://blockchains.github.io/blocks.json)
+- [Blockchains/blockchainlab-api](https://github.com/Blockchains/blockchainlab-api): data source for the dataset tools
+- [Blockchains/blockchainlab-tools](https://github.com/Blockchains/blockchainlab-tools): shares the on-chain logic (`src/onchain*.js` mirror `assets/core*.js`); results link to tool pages
+- [Blockchains/grokhack-forge](https://github.com/Blockchains/grokhack-forge): give a composed Grok app's developer agent these tools, or call the SDK in app code
+- [Blockchains/blockchainlab-sdk](https://github.com/Blockchains/blockchainlab-sdk): typed alternative for app code (this package ships no .d.ts yet)
+- [Blockchains/blockchainlab-lens](https://github.com/Blockchains/blockchainlab-lens): same explorer deep links

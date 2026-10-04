@@ -1,0 +1,150 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Blockchains/.github/main/docs/blocks.schema.json",
+  "schema_version": "1.0",
+  "name": "blockchainlab-mcp",
+  "repo": "Blockchains/blockchainlab-mcp",
+  "summary": "MCP server (stdio) with 43 read-only blockchain tools for AI agents (Cursor, Claude, Grok, any MCP client) plus the same logic as a JS SDK: datasets from the Open Data API and live on-chain helpers (tx/calldata decoding, gas, ENS, Safe, EIP-712, approvals, MEV, Solana, PSBT). No keys; never signs or sends.",
+  "kind": [
+    "mcp-server",
+    "library",
+    "cli"
+  ],
+  "stability": "beta",
+  "version": "0.2.0",
+  "license": "MIT",
+  "entrypoints": [
+    {
+      "type": "mcp-stdio",
+      "name": "blockchainlab",
+      "ref": "bin/blockchainlab-mcp.js",
+      "install": "npx -y github:Blockchains/blockchainlab-mcp",
+      "exports": [
+        "search_whitepapers",
+        "get_chain",
+        "top_defi_protocols",
+        "chains_tvl",
+        "list_hackathons",
+        "list_events",
+        "list_grants",
+        "glossary",
+        "lookup_standard",
+        "gas_prices",
+        "decode_transaction",
+        "inspect_address",
+        "decode_calldata",
+        "abi_utils",
+        "convert_units",
+        "storage_slot",
+        "stablecoins",
+        "defi_yields",
+        "bridges_tvl",
+        "dex_volumes",
+        "protocol_fees",
+        "l2_metrics",
+        "security_incidents",
+        "sanctions_check",
+        "get_dataset",
+        "safe_info",
+        "safe_tx_hash",
+        "decode_safe_calldata",
+        "eip712_hash",
+        "verify_message",
+        "calldata_diff",
+        "contract_verification",
+        "gas_history",
+        "bridge_quotes",
+        "token_approvals",
+        "ens_bulk",
+        "decode_solana_tx",
+        "decode_psbt",
+        "address_labels",
+        "vanity_estimate",
+        "uniswap_price_impact",
+        "mev_sandwich_check",
+        "rpc_health"
+      ]
+    },
+    {
+      "type": "docker",
+      "name": "ghcr.io/blockchains/blockchainlab-mcp",
+      "ref": "Dockerfile",
+      "usage": "docker run -i --rm ghcr.io/blockchains/blockchainlab-mcp:latest"
+    },
+    {
+      "type": "npm",
+      "name": "blockchainlab-mcp",
+      "ref": "src/sdk.js",
+      "install": "npm i github:Blockchains/blockchainlab-mcp",
+      "exports": [
+        "BlockchainLab",
+        "onchain",
+        "onchain2",
+        "toolLinks",
+        "DEFAULT_API",
+        "TOOLS_SITE"
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "name": "tool call",
+      "type": "MCP tools/call",
+      "description": "JSON arguments per tool (see tools/list input schemas)"
+    },
+    {
+      "name": "BLOCKCHAINLAB_API",
+      "type": "env",
+      "description": "optional self-hosted API base"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "tool result",
+      "type": "MCP content (JSON text)",
+      "description": "data with generated_at/source fields and deep links to blockchainlab-tools pages"
+    }
+  ],
+  "deps": [
+    "node>=18",
+    "or docker"
+  ],
+  "compatible_with": [
+    {
+      "repo": "Blockchains/blockchainlab-api",
+      "how": "data source for the dataset tools"
+    },
+    {
+      "repo": "Blockchains/blockchainlab-tools",
+      "how": "shares the on-chain logic (`src/onchain*.js` mirror `assets/core*.js`); results link to tool pages"
+    },
+    {
+      "repo": "Blockchains/grokhack-forge",
+      "how": "give a composed Grok app's developer agent these tools, or call the SDK in app code"
+    },
+    {
+      "repo": "Blockchains/blockchainlab-sdk",
+      "how": "typed alternative for app code (this package ships no .d.ts yet)"
+    },
+    {
+      "repo": "Blockchains/blockchainlab-lens",
+      "how": "same explorer deep links"
+    }
+  ],
+  "tests": {
+    "command": "npm ci && npm test",
+    "ci": ".github/workflows/ci.yml",
+    "network": true
+  },
+  "env": [
+    {
+      "name": "BLOCKCHAINLAB_API",
+      "required": false,
+      "purpose": "point at a self-hosted copy of the Open Data API"
+    }
+  ],
+  "docs": {
+    "readme": "README.md",
+    "agents": "AGENTS.md",
+    "llms": "llms.txt"
+  }
+}

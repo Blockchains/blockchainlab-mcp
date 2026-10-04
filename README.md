@@ -118,6 +118,45 @@ CI runs on Node 18/20/22 on every push and daily.
 
 MIT. Read-only: the server never signs or sends transactions. Not financial advice.
 
+<!-- blocks:start -->
+## Use as a building block
+
+> **For AI agents and builders:** read [`AGENTS.md`](AGENTS.md) (setup, commands, structure, rules), [`llms.txt`](llms.txt) (doc map) and the machine-readable [`blocks.json`](blocks.json) ([schema](https://github.com/Blockchains/.github/blob/main/docs/BLOCKS-SCHEMA.md)). How all Blockchains blocks fit together: **[Build with Blocks](https://github.com/Blockchains/.github/blob/main/docs/BUILD-WITH-BLOCKS.md)** · org catalogue: [https://blockchains.github.io/blocks.json](https://blockchains.github.io/blocks.json).
+
+**What it exports**
+
+| Export | Type | Install / access |
+|---|---|---|
+| `blockchainlab` | mcp-stdio | `npx -y github:Blockchains/blockchainlab-mcp` |
+| `ghcr.io/blockchains/blockchainlab-mcp` | docker | `docker run -i --rm ghcr.io/blockchains/blockchainlab-mcp:latest` |
+| `blockchainlab-mcp` | npm | `npm i github:Blockchains/blockchainlab-mcp` |
+
+`blockchainlab` exports: `search_whitepapers`, `get_chain`, `top_defi_protocols`, `chains_tvl`, `list_hackathons`, `list_events`, `list_grants`, `glossary`, `lookup_standard`, `gas_prices`, `decode_transaction`, `inspect_address`, `decode_calldata`, `abi_utils`, `convert_units`, `storage_slot`, `stablecoins`, `defi_yields`, `bridges_tvl`, `dex_volumes`, `protocol_fees`, `l2_metrics`, `security_incidents`, `sanctions_check`, `get_dataset`, `safe_info`, `safe_tx_hash`, `decode_safe_calldata`, `eip712_hash`, `verify_message`, `calldata_diff`, `contract_verification`, `gas_history`, `bridge_quotes`, `token_approvals`, `ens_bulk`, `decode_solana_tx`, `decode_psbt`, `address_labels`, `vanity_estimate`, `uniswap_price_impact`, `mev_sandwich_check`, `rpc_health`
+
+`blockchainlab-mcp` exports: `BlockchainLab`, `onchain`, `onchain2`, `toolLinks`, `DEFAULT_API`, `TOOLS_SITE`
+
+**Minimal example** (Cursor `~/.cursor/mcp.json`, Claude Desktop or any stdio MCP client; `tools/list` returned 43 tools on 2026-10-04)
+
+```json
+{ "mcpServers": { "blockchainlab": { "command": "npx", "args": ["-y", "github:Blockchains/blockchainlab-mcp"] } } }
+```
+
+**Inputs → outputs**
+
+- In: `tool call` (MCP tools/call) JSON arguments per tool (see tools/list input schemas); `BLOCKCHAINLAB_API` (env) optional self-hosted API base
+- Out: `tool result` (MCP content (JSON text)) data with generated_at/source fields and deep links to blockchainlab-tools pages
+
+**Composes with**
+
+- [Blockchains/blockchainlab-api](https://github.com/Blockchains/blockchainlab-api): data source for the dataset tools
+- [Blockchains/blockchainlab-tools](https://github.com/Blockchains/blockchainlab-tools): shares the on-chain logic (`src/onchain*.js` mirror `assets/core*.js`); results link to tool pages
+- [Blockchains/grokhack-forge](https://github.com/Blockchains/grokhack-forge): give a composed Grok app's developer agent these tools, or call the SDK in app code
+- [Blockchains/blockchainlab-sdk](https://github.com/Blockchains/blockchainlab-sdk): typed alternative for app code (this package ships no .d.ts yet)
+- [Blockchains/blockchainlab-lens](https://github.com/Blockchains/blockchainlab-lens): same explorer deep links
+
+**Versioning & stability:** `beta`. 0.x: tool names are kept stable, but new tools are added and output fields may grow. Not on the npm registry yet; install from GitHub (pin `#<commit>`; no release tag yet) or use the GHCR image (`:latest`). `server.json` is prepared for the MCP Registry.
+<!-- blocks:end -->
+
 ## Contributing
 
 Issues and pull requests are welcome. Please read the [contributing guide](https://github.com/Blockchains/.github/blob/main/CONTRIBUTING.md), [code of conduct](https://github.com/Blockchains/.github/blob/main/CODE_OF_CONDUCT.md) and [security policy](https://github.com/Blockchains/.github/blob/main/SECURITY.md) first.
