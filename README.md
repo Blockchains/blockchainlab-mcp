@@ -2,7 +2,7 @@
 
 ![Blockchain Lab MCP](social-preview.png)
 
-**Give AI agents (Cursor, Claude Desktop/Code, Grok, any MCP client) real blockchain knowledge and live on-chain tools.** 16 read-only tools over the [Blockchain Lab Open Data API](https://blockchains.github.io/blockchainlab-api/) and public RPCs. No API keys.
+**Give AI agents (Cursor, Claude Desktop/Code, Grok, any MCP client) real blockchain knowledge and live on-chain tools.** **43 read-only tools** over the [Blockchain Lab Open Data API](https://blockchains.github.io/blockchainlab-api/) and public RPCs. No API keys.
 
 > Built by **Blockchain Lab — [blockchainlab.com](https://blockchainlab.com/?utm_source=github&utm_medium=readme&utm_campaign=blockchainlab-mcp)**
 
@@ -21,9 +21,39 @@
 | `decode_transaction` | Decode any tx (call, args, logs, fees) | public RPCs + openchain |
 | `inspect_address` | ENS, checksum, balance, contract/proxy/7702, ERC-20 | public RPCs |
 | `decode_calldata` / `abi_utils` | Decode calldata, selectors, encode calls | openchain / 4byte |
+| `stablecoins` · `defi_yields` · `bridges_tvl` · `dex_volumes` · `protocol_fees` | Stablecoin pegs & supply, top yields, bridges by TVL, DEX volume, protocol fees | DefiLlama (nightly) |
+| `l2_metrics` | L2 stage, stack, risks, TVS breakdown | L2BEAT (nightly) |
+| `security_incidents` | Hacks/exploits by protocol, technique, date, size | DefiLlama hacks DB |
+| `sanctions_check` | Screen addresses against OFAC SDN list | OFAC via 0xB10C |
+| `get_dataset` | Any of the 20 Open Data API datasets, raw | [blockchainlab-api](https://blockchains.github.io/blockchainlab-api/) |
+| `safe_info` · `safe_tx_hash` · `decode_safe_calldata` | Safe owners/threshold/nonce; safeTxHash computed locally **and** checked against the Safe on-chain; decode execTransaction / MultiSend | public RPC |
+| `eip712_hash` · `verify_message` | EIP-712 digest/domain/struct hash, recover signer, ERC-1271 check; EIP-191 recover | local + RPC |
+| `calldata_diff` | Field-by-field diff of two calldata blobs | openchain / 4byte |
+| `contract_verification` | Verified on Sourcify / Blockscout? compiler, licence, proxy | Sourcify, Blockscout |
+| `gas_history` | Base fee / tips over ≤1,024 blocks with stats | eth_feeHistory |
+| `bridge_quotes` | Live USDC/ETH bridge quotes compared | Across, LI.FI, Relay |
+| `token_approvals` | Risky ERC-20 approvals + revoke calldata/link | Multicall3 + Revoke.cash link |
+| `ens_bulk` | Resolve/reverse up to 50 ENS names with records | ENS |
+| `decode_solana_tx` | Solana tx: instructions, programs, balance/token changes | Solana RPC |
+| `decode_psbt` | Bitcoin PSBT / raw tx: inputs, outputs, fee rate, BIP-32 | local (@scure/btc-signer) |
+| `address_labels` | Who is this address? tags, ENS, token, OFAC | Blockscout, ENS, token lists |
+| `vanity_estimate` | Vanity prefix difficulty/time; CREATE2 address | local |
+| `uniswap_price_impact` | On-chain Uniswap v3 quote + price impact | QuoterV2 + slot0 |
+| `mev_sandwich_check` | Was this swap sandwiched? | eth_getBlockReceipts |
+| `rpc_health` | Free public RPC latency / lag now + nightly | live probe + API |
 | `convert_units` / `storage_slot` | wei↔ether etc., mapping/array/ERC-7201 slots (+ live read) | local + RPC |
 
-## Install
+## One-click install
+
+[![Add to Cursor](https://img.shields.io/badge/Add_to-Cursor-000?logo=cursor)](cursor://anysphere.cursor-deeplink/mcp/install?name=blockchainlab&config=eyJjb21tYW5kIjogIm5weCIsICJhcmdzIjogWyIteSIsICJnaXRodWI6QmxvY2tjaGFpbnMvYmxvY2tjaGFpbmxhYi1tY3AiXX0%3D) [![Install in VS Code](https://img.shields.io/badge/Install_in-VS_Code-007ACC?logo=visualstudiocode)](https://insiders.vscode.dev/redirect/mcp/install?name=blockchainlab&config=%7B%22command%22%3A%20%22npx%22%2C%20%22args%22%3A%20%5B%22-y%22%2C%20%22github%3ABlockchains/blockchainlab-mcp%22%5D%7D) [![Install in VS Code (Docker)](https://img.shields.io/badge/VS_Code-Docker-2496ED?logo=docker)](https://insiders.vscode.dev/redirect/mcp/install?name=blockchainlab-docker&config=%7B%22command%22%3A%20%22docker%22%2C%20%22args%22%3A%20%5B%22run%22%2C%20%22-i%22%2C%20%22--rm%22%2C%20%22ghcr.io/blockchains/blockchainlab-mcp%3Alatest%22%5D%7D)
+
+**Docker (GHCR)** — no Node needed:
+
+```json
+{ "mcpServers": { "blockchainlab": { "command": "docker", "args": ["run", "-i", "--rm", "ghcr.io/blockchains/blockchainlab-mcp:latest"] } } }
+```
+
+## Install (manual)
 
 Requires Node ≥ 18. Not yet on the npm registry — install straight from GitHub:
 
@@ -90,3 +120,9 @@ MIT. Read-only: the server never signs or sends transactions. Not financial advi
 
 ---
 Built by Blockchain Lab — [blockchainlab.com](https://blockchainlab.com/?utm_source=github&utm_medium=readme&utm_campaign=blockchainlab-mcp)
+
+## Release & packaging
+
+- `npm pack --dry-run` is run in CI; the package is **ready but deliberately not published** to npm. To publish: `npm publish` (name `blockchainlab-mcp`).
+- `server.json` is prepared for the official MCP Registry (`io.github.Blockchains/blockchainlab-mcp`) — publish with `mcp-publisher publish` after the npm release.
+- Docker image `ghcr.io/blockchains/blockchainlab-mcp` (linux/amd64 + arm64) is built, smoke-tested over stdio (initialize + tools/list ≥ 43) and pushed on every push to `main` and on `v*` tags.

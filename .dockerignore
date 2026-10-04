@@ -1,0 +1,6 @@
+node_modules
+.git
+.github
+test
+social-preview.png
+*.tgz
